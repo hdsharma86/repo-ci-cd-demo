@@ -4,7 +4,7 @@ $server_ip = gethostbyname(gethostname());
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to Your EC2 Instance</title>
+    <title>Welcome to Your EC2 Instance V2</title>
     <style>
         body {
             font-family: Arial, sans-serif;
