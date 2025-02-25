@@ -1,3 +1,25 @@
-    - name: Debug SSH Connection
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Add GitHub to Known Hosts
       run: |
-        ssh -vvv -i <(echo "${{ secrets.EC2_SSH_KEY }}") ubuntu@${{ secrets.EC2_HOST }} "echo 'SSH Connection Successful'"
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu  # Change to 'ec2-user' if using Amazon Linux
+        key: |
+          ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          ssh -vvv -i <(echo "${{ secrets.EC2_SSH_KEY }}") ubuntu@${{ secrets.EC2_HOST }} "echo 'SSH Connection Successful'"
+          cd /var/www/html
+          git pull origin main
+          sudo systemctl restart apache2
