@@ -1,3 +1,10 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -6,18 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Add GitHub to Known Hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v0.1.8
       with:
         host: ${{ secrets.EC2_HOST }}
-        username: ubuntu  # Change to 'ec2-user' if using Amazon Linux
-        key: |
-          ${{ secrets.EC2_SSH_KEY }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /var/www/html
           git pull origin main
